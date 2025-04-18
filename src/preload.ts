@@ -17,7 +17,7 @@
 */
 
 import { debounce } from "@shared/debounce";
-import { contextBridge, webFrame } from "electron";
+import { contextBridge, ipcRenderer, webFrame } from "electron";
 import { readFileSync, watch } from "fs";
 import { join } from "path";
 
@@ -61,4 +61,24 @@ else {
     contextBridge.exposeInMainWorld("getCurrentCss", VencordNative.quickCss.get);
     // shrug
     contextBridge.exposeInMainWorld("getTheme", () => "vs-dark");
+}
+
+
+contextBridge.exposeInMainWorld("remoteVoiceControlBridge", {
+    // Function for the renderer to add a listener
+    addActionListener: (callback: (action: string) => void) => {
+        const handler = (_: Electron.IpcRendererEvent, action: string) => callback(action);
+        ipcRenderer.on("VC-REMOTE-VOICE-CONTROL-ACTION", handler);
+        // Return a function to remove the listener
+        return () => ipcRenderer.removeListener("VC-REMOTE-VOICE-CONTROL-ACTION", handler);
+    }
+});
+
+// Make sure TypeScript knows about the exposed API
+declare global {
+    interface Window {
+        remoteVoiceControlBridge: {
+            addActionListener: (callback: (action: string) => void) => () => void;
+        };
+    }
 }

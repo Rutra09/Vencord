@@ -252,7 +252,7 @@ export default definePlugin({
             const Native = VencordNative.pluginHelpers.ConsoleShortcuts as PluginNative<typeof import("./native")>;
             Native.initDevtoolsOpenEagerLoad();
         }
-    },
+    },  
 
     async eagerLoad(forceLoad: boolean) {
         await webpackModulesProbablyLoaded;

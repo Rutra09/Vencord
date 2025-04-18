@@ -28,7 +28,7 @@ import { ReactElement } from "react";
 
 import { getCurrentVoice, settings } from "./settings";
 
-interface VoiceState {
+export interface VoiceState {
     userId: string;
     channelId?: string;
     oldChannelId?: string;
